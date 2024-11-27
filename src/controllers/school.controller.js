@@ -6,7 +6,8 @@ const addSchool = async (req, res) => {
     const newSchool = await schoolService.addSchool(schoolData);
     res.status(201).json(newSchool);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    console.error("Error adding school:", error.message);
+    res.status(400).json({ error: "Failed to add school" });
   }
 };
 
@@ -21,7 +22,8 @@ const listSchools = async (req, res) => {
     const schools = await schoolService.listSchools(latitude, longitude);
     res.json(schools);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("Error listing schools:", error.message);
+    res.status(500).json({ error: "Failed to list schools" });
   }
 };
 
