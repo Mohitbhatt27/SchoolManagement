@@ -13,7 +13,6 @@ const listSchools = async (userLatitude, userLongitude) => {
   try {
     const schools = await schoolRepository.getAllSchools();
 
-    // First, calculate distances and create objects with numerical distance values
     const schoolsWithDistance = schools.map((school) => {
       const distance = getDistance(
         userLatitude,
@@ -28,15 +27,13 @@ const listSchools = async (userLatitude, userLongitude) => {
         address: school.address,
         latitude: school.latitude,
         longitude: school.longitude,
-        distance: distance, // Keep numerical distance for sorting
-        distanceFromUser: `${distance.toFixed(2)} km`, // Formatted distance for display
+        distance: distance,
+        distanceFromUser: `${distance.toFixed(2)} km`,
       };
     });
 
-    // Sort using the numerical distance value
     schoolsWithDistance.sort((a, b) => a.distance - b.distance);
 
-    // Remove the numerical distance field from final response
     return schoolsWithDistance.map(({ distance, ...school }) => school);
   } catch (error) {
     console.error("Error listing schools:", error.message);
