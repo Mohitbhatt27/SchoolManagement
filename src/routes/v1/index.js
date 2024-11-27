@@ -1,8 +1,8 @@
 const express = require("express");
 const V1router = express.Router();
 
-const pingRoutes = require("./ping_router_v1");
+const Schoolrouter = require("./school.routes");
 
-V1router.use("/ping", pingRoutes);
+V1router.use("/school", Schoolrouter);
 
 module.exports = V1router;
