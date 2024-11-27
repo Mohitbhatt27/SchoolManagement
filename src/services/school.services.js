@@ -12,33 +12,41 @@ const addSchool = async (schoolData) => {
 const listSchools = async (userLatitude, userLongitude) => {
   try {
     const schools = await schoolRepository.getAllSchools();
-    schools.sort((a, b) => {
-      const distanceA = getDistance(
+
+    // First, calculate distances and create objects with numerical distance values
+    const schoolsWithDistance = schools.map((school) => {
+      const distance = getDistance(
         userLatitude,
         userLongitude,
-        a.latitude,
-        a.longitude
+        school.latitude,
+        school.longitude
       );
-      const distanceB = getDistance(
-        userLatitude,
-        userLongitude,
-        b.latitude,
-        b.longitude
-      );
-      return distanceA - distanceB;
+
+      return {
+        id: school.id,
+        name: school.name,
+        address: school.address,
+        latitude: school.latitude,
+        longitude: school.longitude,
+        distance: distance, // Keep numerical distance for sorting
+        distanceFromUser: `${distance.toFixed(2)} km`, // Formatted distance for display
+      };
     });
-    return schools;
+
+    // Sort using the numerical distance value
+    schoolsWithDistance.sort((a, b) => a.distance - b.distance);
+
+    // Remove the numerical distance field from final response
+    return schoolsWithDistance.map(({ distance, ...school }) => school);
   } catch (error) {
     console.error("Error listing schools:", error.message);
     throw new Error("Failed to list schools");
   }
 };
 
-// Helper function to calculate distance between two coordinates
 const getDistance = (lat1, lon1, lat2, lon2) => {
   const toRad = (value) => (value * Math.PI) / 180;
-  const R = 6371;
-  // Radius of the Earth in kilometers
+  const R = 6371; // Radius of the Earth in kilometers
   const dLat = toRad(lat2 - lat1);
   const dLon = toRad(lon2 - lon1);
   const a =
@@ -51,4 +59,5 @@ const getDistance = (lat1, lon1, lat2, lon2) => {
   const distance = R * c;
   return distance;
 };
+
 module.exports = { addSchool, listSchools };
