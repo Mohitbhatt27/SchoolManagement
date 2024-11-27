@@ -15,6 +15,13 @@ app.use(bodyParser.text());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
+// Health check route
+app.get("/", (req, res) => {
+  res.json({
+    message: "API is up and running! Please visit /api-docs to test the API.",
+  });
+});
+
 app.use("/api", APIrouter);
 
 sequelize
